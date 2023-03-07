@@ -44,10 +44,14 @@ if oos_tag and oos_tag.string == oos_msg:
     print("Out of stock :(")
 else:
     # Probably in stock, send alert.
-    logging.info("In stock.")
-    client = Client(account_sid, auth_token)
-    message = client.messages.create(
-        body="KA Dahlia is in stock at Creekside Dahlias.",
-        from_="your virtual phone number",
-        to="your destination phone number",
-    )
+    # But only if an alert was not already sent.
+    with open("dahlia.log", "r") as f:
+        log_text = f.read()
+    if log_text:
+        logging.info("In stock.")
+        client = Client(account_sid, auth_token)
+        message = client.messages.create(
+            body="KA Dahlia is in stock at Creekside Dahlias.",
+            from_="your virtual phone number",
+            to="your destination phone number",
+        )
