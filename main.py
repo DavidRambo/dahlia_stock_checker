@@ -5,11 +5,22 @@ If they are in stock, send text message using twilio.
 I have a separate scripts directory that has a copy of this script with my
 twilio account information.
 """
-from bs4 import BeautifulSoup as bs
+import logging
 import os
+
+from bs4 import BeautifulSoup as bs
 import requests
 from twilio.rest import Client
 
+
+# Setup logging file so that there is a record of in-stock results.
+logging.basicConfig(
+    format="%(asctime)s %(message)s",
+    datefmt="%m/%d%Y %I:%M:%S %p",
+    filename="dahlia.log",
+    encoding="utf-8",
+    level=logging.INFO,
+)
 
 # Setup Twilio environment variables
 account_sid = "placeholder"
@@ -33,7 +44,7 @@ if oos_tag and oos_tag.string == oos_msg:
     print("Out of stock :(")
 else:
     # Probably in stock, send alert.
-    print("In Stock!")
+    logging.info("In stock.")
     client = Client(account_sid, auth_token)
     message = client.messages.create(
         body="KA Dahlia is in stock at Creekside Dahlias.",
