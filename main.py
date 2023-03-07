@@ -6,13 +6,20 @@ I have a separate scripts directory that has a copy of this script with my
 twilio account information.
 """
 from bs4 import BeautifulSoup as bs
+import os
 import requests
+from twilio.rest import Client
+
+
+# Setup Twilio environment variables
+account_sid = "placeholder"
+auth_token = os.environ["TWILIO_AUTH_TOKEN"]
 
 
 url = "https://www.creeksidedahlias.com/store/p534/KA%27S_Khaleesi.html"
 response = requests.get(url)
 
-print("Status code: ", response)
+# print("Status code: ", response)
 
 soup = bs(response.text, "html.parser")
 
@@ -23,7 +30,13 @@ oos_msg = "\n\t\t\t\t\t\t\tSold out\n\t\t\t\t\t\t"
 oos_tag = soup.find(id="wsite-com-product-inventory-out-of-stock-message")
 
 if oos_tag and oos_tag.string == oos_msg:
-    pass
+    print("Out of stock :(")
 else:
     # Probably in stock, send alert.
     print("In Stock!")
+    client = Client(account_sid, auth_token)
+    message = client.messages.create(
+        body="KA Dahlia is in stock at Creekside Dahlias.",
+        from_="your virtual phone number",
+        to="your destination phone number",
+    )
