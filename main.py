@@ -47,7 +47,7 @@ else:
     # But only if an alert was not already sent.
     with open("dahlia.log", "r") as f:
         log_text = f.read()
-    if log_text:
+    if not log_text:  # if log_text != ""
         logging.info("In stock.")
         client = Client(account_sid, auth_token)
         message = client.messages.create(
